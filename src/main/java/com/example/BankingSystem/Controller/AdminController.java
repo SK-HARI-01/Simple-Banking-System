@@ -37,7 +37,11 @@ public class AdminController {
         String accno = idGenerator.generateAccountNumber();
 
         CustomerEntity customer = new CustomerEntity(uname, password, name, phno, accno, acctype,
+<<<<<<< HEAD
                 new BigDecimal("10000.00"), aadhaarno, panno);
+=======
+        		new BigDecimal("10000.00"), aadhaarno, panno);
+>>>>>>> 369e78a (Update the Transaction generator)
 
         customerRepo.save(customer);
         return "redirect:/admin/create-account?success=true";

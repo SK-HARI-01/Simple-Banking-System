@@ -16,6 +16,8 @@ public class IdGeneratorService {
     public String generateTransactionId() {
         String prefix = "TXN";
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        return prefix + timestamp;
+        int randomSuffix = new Random().nextInt(9000) + 1000; // 4-digit random number
+        return prefix + timestamp + randomSuffix;
     }
+
 }
