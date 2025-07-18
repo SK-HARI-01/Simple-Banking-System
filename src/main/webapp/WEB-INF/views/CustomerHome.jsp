@@ -142,6 +142,8 @@
     <button onclick="openModal('updateModal')">Update Details</button>
     <button onclick="openModal('transferModal')">Make Transfer</button>
     <button onclick="openModal('transactionModal')">View Transactions</button>
+    <button onclick="window.location.href='/customer/emiplanner'">EMI Planner</button>
+    <button onclick="window.location.href='/customer/loanapply'">Apply for Loan</button>
 </div>
 
 <!-- Update Modal -->

@@ -49,8 +49,21 @@ public class CustomerController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+    }	
+    
+    @GetMapping("/emiplanner")
+    public String emiplanner(HttpSession session) {
+    	CustomerEntity customer = (CustomerEntity) session.getAttribute("loggedInUser");
+        if (customer == null) return "redirect:/login";
+    	return "EmiPlanner";
     }
-
+    
+    @GetMapping("/loanapply")
+    public String loanapply(HttpSession session, Model model) {
+    	CustomerEntity customer = (CustomerEntity) session.getAttribute("loggedInUser");
+        if (customer == null) return "redirect:/login";
+    	return "Loanapply";
+    }
     
     @PostMapping("/update")
     public String updateInfo(@RequestParam String phno,
@@ -65,7 +78,23 @@ public class CustomerController {
         session.setAttribute("loggedInUser", customer); 
         return "redirect:/customer/home";
     }
-
+    
+    @PostMapping("/loanapply")
+    public String loanform(@RequestParam BigDecimal loanAmount, HttpSession session) {
+    	CustomerEntity customer = (CustomerEntity) session.getAttribute("loggedInUser");
+        if (customer == null) return "redirect:/login";
+        
+        customer.setBalance(customer.getBalance().add(loanAmount));
+        customerRepo.save(customer);
+        
+        TransactionTable creditTxn = new TransactionTable(
+                idGenerator.generateTransactionId(), "Loan Credited ", "CREDIT", loanAmount, LocalDate.now());
+        creditTxn.setCustomer(customer);
+        transactionRepo.save(creditTxn);
+        
+    	return "redirect:/customer/home?loanapply=ture"; 	
+    }
+    
     @PostMapping("/transfer")
     @Transactional
     public String transferMoney(@RequestParam String toAccno,
@@ -86,7 +115,7 @@ public class CustomerController {
         // Debit sender
         sender.setBalance(sender.getBalance().subtract(amount));
         TransactionTable debitTxn = new TransactionTable(
-                idGenerator.generateTransactionId(), detail, "DEBIT", amount, LocalDate.now());
+                idGenerator.generateTransactionId(), detail+"Receiver Acc = "+toAccno, "DEBIT", amount, LocalDate.now());
         debitTxn.setCustomer(sender);
         transactionRepo.save(debitTxn);
         customerRepo.save(sender);
