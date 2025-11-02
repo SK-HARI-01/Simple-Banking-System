@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.BankingSystem.Entity.AdminEntity;
 import com.example.BankingSystem.Entity.CustomerEntity;
+import com.example.BankingSystem.Repository.AdminRepo;
 import com.example.BankingSystem.Repository.CustomerRepo;
 
 import jakarta.servlet.http.HttpSession;
@@ -14,11 +16,15 @@ public class LoginController {
 
     @Autowired
     private CustomerRepo customerRepo;
+    
+    @Autowired
+    private AdminRepo adminRepo;
 
     @GetMapping({"/", "/home"})
     public String showHome() {
         return "Home";
     }
+    
     @GetMapping("/login")
     public String showLoginForm() {
         return "LoginPage";
@@ -26,6 +32,20 @@ public class LoginController {
 
     @PostMapping("/login")
     public String processLogin(@RequestParam String username, @RequestParam String password, HttpSession session) {
+        // Check for admin login
+        if ("admin".equals(username)) {
+            AdminEntity admin = adminRepo.findByUsername(username)
+                    .filter(a -> a.getPassword().equals(password))
+                    .orElse(null);
+            System.out.println("Admin login");
+            if (admin != null) {
+                session.setAttribute("adminLoggedIn", true);
+                return "redirect:/admin/dashboard";
+            }
+            return "redirect:/login?error=true";
+        }
+        
+        // Customer login
         CustomerEntity customer = customerRepo.findByUname(username)
                 .filter(c -> c.getPassword().equals(password))
                 .orElse(null);

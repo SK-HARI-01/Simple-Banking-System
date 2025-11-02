@@ -55,6 +55,10 @@ public class CustomerEntity {
 		return uname;
 	}
 
+	public long getId() {
+    	return id;
+	}
+
 	public void setUname(String uname) {
 		this.uname = uname;
 	}
