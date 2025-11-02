@@ -15,9 +15,9 @@ public class LoginController {
     @Autowired
     private CustomerRepo customerRepo;
 
-    @GetMapping
+    @GetMapping({"/", "/home"})
     public String showHome() {
-    	return "Home";
+        return "Home";
     }
     @GetMapping("/login")
     public String showLoginForm() {
